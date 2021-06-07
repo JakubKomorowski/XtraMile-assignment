@@ -2,26 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { makeStyles } from "@material-ui/core/styles";
-import UserAccordion from "./Accordion";
-import styled from "styled-components";
+import UserAccordion from "../components/UserAccordion";
+import { StyledUserList, useStyles } from "./StyledRoot";
 
-const UserUl = styled.ul`
-  list-style: none;
-  max-width: 800px;
-  padding: 0;
-  margin: 0 auto;
-  margin-top: 10vh;
-`;
-
-const useStyles = makeStyles((theme) => ({
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: "#fff",
-  },
-}));
-
-const App = () => {
+const Root = () => {
   const [usersData, setUsersData] = useState([]);
   const [formattedData, setFormattedData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +18,6 @@ const App = () => {
       .then(({ data }) => {
         setUsersData(data);
         setLoading(false);
-        console.log(data);
       })
       .catch((err) => console.log(err));
   };
@@ -65,7 +48,7 @@ const App = () => {
 
       // creating project and course arrays
       userProjects = userProjects.map((project) => {
-        let projectObj = {};
+        let projectWithCourses = {};
         let tempCourses = [];
         let tempLessonsOpen = [];
         let tempLessonsCompleted = [];
@@ -85,42 +68,40 @@ const App = () => {
               item.completedLessonsCount,
             ];
             // creating a course object
-            const newTempCourses = tempCourses.map((el, i) => {
-              const courseObj = {
-                courseName: el,
+            const courses = tempCourses.map((course, i) => {
+              const courseWithLessons = {
+                courseName: course,
                 lessonsOpen: parseInt(tempLessonsOpen[i]),
                 lessonsCompleted: tempLessonsCompleted[i],
               };
-              return courseObj;
+              return courseWithLessons;
             });
             //creating project object
-            projectObj = {
+            projectWithCourses = {
               projectName: project,
-              courses: newTempCourses,
+              courses,
             };
           }
         });
 
-        return projectObj;
+        return projectWithCourses;
       });
 
       //removing empty objects from projects array
-      const newUsersProjects = userProjects.filter(
+      const formattedUsersProjects = userProjects.filter(
         (value) => Object.keys(value).length !== 0
       );
 
       const dataItem = {
         email,
-        newUsersProjects,
+        usersProjects: formattedUsersProjects,
       };
       return dataItem;
     });
 
-    console.log("TUTAJ", newData);
-    setFormattedData(newData);
+    setFormattedData([...newData]);
   };
 
-  //formatData triggers when usersData exists
   useEffect(() => {
     formatData();
   }, [usersData]);
@@ -134,18 +115,18 @@ const App = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       ) : (
-        <UserUl>
+        <StyledUserList>
           {formattedData.map((user, index) => {
             return (
               <li key={index}>
-                <UserAccordion user={user} />
+                <UserAccordion {...user} />
               </li>
             );
           })}
-        </UserUl>
+        </StyledUserList>
       )}
     </>
   );
 };
 
-export default App;
+export default Root;
