@@ -3,6 +3,16 @@ import { useEffect, useState } from "react";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { makeStyles } from "@material-ui/core/styles";
+import UserAccordion from "./Accordion";
+import styled from "styled-components";
+
+const UserUl = styled.ul`
+  list-style: none;
+  max-width: 800px;
+  padding: 0;
+  margin: 0 auto;
+  margin-top: 10vh;
+`;
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -124,23 +134,15 @@ const App = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       ) : (
-        <ul>
+        <UserUl>
           {formattedData.map((user, index) => {
             return (
               <li key={index}>
-                <p>{user.email}</p>
-                --------------------
-                {user.newUsersProjects.map((project) => {
-                  return (
-                    <li>
-                      <p>{project.projectName}</p>
-                    </li>
-                  );
-                })}
+                <UserAccordion user={user} />
               </li>
             );
           })}
-        </ul>
+        </UserUl>
       )}
     </>
   );
