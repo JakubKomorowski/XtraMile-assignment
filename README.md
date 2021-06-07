@@ -11,6 +11,4 @@ This project was bootstrapped with Create React App.
 
 ## Live demo: https://xtramile-assignment.netlify.app/
 
-### email
-
-jakub.komorowski01@gmail.com
+### Email: jakub.komorowski01@gmail.com
